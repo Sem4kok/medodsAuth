@@ -1,7 +1,4 @@
-build:
-	@go build -o bin/medodsAuth
-run: build
-	@./bin/medodsAuth
+run:
+	@go run ./cmd/main.go
 test:
 	@go test -v ./...
-
