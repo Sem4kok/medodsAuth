@@ -12,10 +12,6 @@ import (
 	"syscall"
 )
 
-const (
-	storagePath = ""
-)
-
 type App struct {
 	*gin.Engine
 }
