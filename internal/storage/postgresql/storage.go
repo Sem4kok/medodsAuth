@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
 	"log"
@@ -44,4 +46,37 @@ func (db *Storage) SaveUser(user *models.User) error {
 	}
 
 	return nil
+}
+
+func (db *Storage) SaveToken(token *models.RefreshToken) error {
+	const (
+		op    = "storage.postgresql.SaveToken"
+		query = "INSERT INTO refresh_tokens (user_guid, ip_address, token_hash, token_id) VALUES ($1, $2, $3, $4));"
+	)
+
+	_, err := db.Exec(context.Background(), query, token.GUID, token.IP, token.RefreshTokenHash, token.ID)
+	if err != nil {
+		log.Printf("%s : %v", op, err)
+		return fmt.Errorf("query can't be executed : %v", err.Error())
+	}
+
+	return nil
+}
+
+func (db *Storage) GetUserByGUID(guid string) (*models.User, error) {
+	const (
+		op    = "storage.postgresql.GetUserByGUID"
+		query = "SELECT email, password, last_name, first_name FROM users WHERE guid=$1"
+	)
+	var user = &models.User{}
+	row := db.QueryRow(context.Background(), query, guid)
+
+	if err := row.Scan(&user.Email, &user.Password, &user.LastName, &user.FirstName); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("%s : user with GUID %s not found", op, guid)
+		}
+		return nil, fmt.Errorf("%s : %w", op, err)
+	}
+
+	return user, nil
 }
