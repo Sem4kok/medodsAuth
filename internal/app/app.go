@@ -50,7 +50,7 @@ func (app *App) MustRunApp() {
 
 func (app *App) handleUrls() {
 	app.POST("/api/register", users.Register)
-	app.POST("/api/token/get", tokens.GetTokens)
+	app.GET("/api/token/get", tokens.GetTokens)
 	app.POST("/api/token/refresh", tokens.RefreshTokens)
 }
 
