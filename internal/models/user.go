@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"strings"
 	"time"
 )
@@ -60,11 +61,13 @@ func (user *User) GenerateTokens(ipAddress string) (*Tokens, error) {
 
 	accessToken, err := generateAccessToken(user.GUID, ipAddress, tokenID)
 	if err != nil {
+		log.Printf("%s : %s\n", op, err.Error())
 		return nil, fmt.Errorf("%s : %w", op, err)
 	}
 
 	refreshToken, refreshTokenHash, err := generateRefreshToken()
 	if err != nil {
+		log.Printf("%s : %s\n", op, err.Error())
 		return nil, fmt.Errorf("%s : %w", op, err)
 	}
 

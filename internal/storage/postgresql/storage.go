@@ -75,6 +75,7 @@ func (db *Storage) GetUserByGUID(guid string) (*models.User, error) {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("%s : user with GUID %s not found", op, guid)
 		}
+		log.Printf("%s : %s\n", op, err.Error())
 		return nil, fmt.Errorf("%s : %w", op, err)
 	}
 
