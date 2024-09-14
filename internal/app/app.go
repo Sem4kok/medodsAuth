@@ -3,17 +3,16 @@ package app
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"log"
 	"medodsAuth/internal/controller/tokens"
 	"medodsAuth/internal/controller/users"
-	storage "medodsAuth/internal/storage/postgresql"
 	"net/http"
 	"os/signal"
 	"syscall"
 )
 
 const (
-	localhost   = ":8081"
 	storagePath = ""
 )
 
@@ -32,15 +31,19 @@ func (app *App) MustRunApp() {
 		syscall.SIGALRM)
 	defer stop()
 
+	if err := initConfig(); err != nil {
+		log.Fatal(err)
+	}
+
 	server := http.Server{
 		Handler: app.Engine,
 	}
 
-	storage.ConnectDB(storagePath)
+	//storage.ConnectDB(viper.GetString("storagePath"))
 	app.handleUrls()
 
 	go func() {
-		log.Fatal(app.Run(localhost))
+		log.Fatal(app.Run(viper.GetString("port")))
 	}()
 
 	<-quit.Done()
@@ -53,4 +56,10 @@ func (app *App) handleUrls() {
 	app.POST("/api/register", users.Register)
 	app.POST("/api/token/get", tokens.GetTokens)
 	app.POST("/api/token/refresh", tokens.RefreshTokens)
+}
+
+func initConfig() error {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }
