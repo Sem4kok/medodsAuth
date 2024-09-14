@@ -1,10 +1,14 @@
 package models
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
+	"time"
 )
 
 type User struct {
@@ -47,4 +51,57 @@ func (user *User) CreateUser() error {
 	user.GUID = uuid.New().String()
 
 	return nil
+}
+
+func (user *User) GenerateTokens(ipAddress string) (*Tokens, error) {
+	const op = "models.users.GenerateTokens"
+
+	tokenID := uuid.New().String()
+
+	accessToken, err := generateAccessToken(user.GUID, ipAddress, tokenID)
+	if err != nil {
+		return nil, fmt.Errorf("%s : %w", op, err)
+	}
+
+	refreshToken, refreshTokenHash, err := generateRefreshToken()
+	if err != nil {
+		return nil, fmt.Errorf("%s : %w", op, err)
+	}
+
+	return &Tokens{
+		Access:           accessToken,
+		Refresh:          refreshToken,
+		RefreshTokenHash: refreshTokenHash,
+		TokenID:          tokenID,
+	}, nil
+}
+
+func generateAccessToken(guid, ipAddress, tokenID string) (string, error) {
+	claims := jwt.MapClaims{
+		"GUID":      guid,
+		"IPAddress": ipAddress,
+		"TokenID":   tokenID,
+		"exp":       time.Now().Add(15 * time.Minute).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
+	secretKey := "NoSecretForMedods"
+	return token.SignedString([]byte(secretKey))
+}
+
+func generateRefreshToken() (string, string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", "", err
+	}
+
+	token := base64.StdEncoding.EncodeToString(b)
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
+	if err != nil {
+		return "", "", err
+	}
+
+	return token, string(hash), nil
 }

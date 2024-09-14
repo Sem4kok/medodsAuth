@@ -21,5 +21,8 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User created successfully",
+		"guid":    user.GUID,
+	})
 }
