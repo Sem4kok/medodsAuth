@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"log"
+	"medodsAuth/internal/controller/tokens"
 	"medodsAuth/internal/controller/users"
 	storage "medodsAuth/internal/storage/postgresql"
 	"net/http"
@@ -50,5 +51,6 @@ func (app *App) MustRunApp() {
 
 func (app *App) handleUrls() {
 	app.POST("/api/register", users.Register)
-	app.POST("/api/login", users.Login)
+	app.POST("/api/token/get", tokens.GetTokens)
+	app.POST("/api/token/refresh", tokens.RefreshTokens)
 }

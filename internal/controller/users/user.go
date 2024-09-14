@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-// TODO HANDLERS
 func Register(c *gin.Context) {
 	var user *models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -23,8 +22,4 @@ func Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
-}
-
-func Login(c *gin.Context) {
-
 }
