@@ -1,2 +1,2 @@
 port: ":8081"
-storagePath: ""
+storagePath: "postgres://postgres:qwerty@localhost:5437/postgres"
