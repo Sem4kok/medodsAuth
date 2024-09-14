@@ -44,7 +44,6 @@ func (user *User) CreateUser() error {
 	}
 	user.Password = string(pwSlice)
 
-	// TODO guid for user
 	user.GUID = uuid.New().String()
 
 	return nil

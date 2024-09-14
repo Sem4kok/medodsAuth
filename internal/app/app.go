@@ -7,6 +7,7 @@ import (
 	"log"
 	"medodsAuth/internal/controller/tokens"
 	"medodsAuth/internal/controller/users"
+	storage "medodsAuth/internal/storage/postgresql"
 	"net/http"
 	"os/signal"
 	"syscall"
@@ -35,10 +36,9 @@ func (app *App) MustRunApp() {
 		Handler: app.Engine,
 	}
 
-	//storage.ConnectDB(viper.GetString("storagePath"))
-	app.handleUrls()
-
 	go func() {
+		storage.ConnectDB(viper.GetString("storagePath"))
+		app.handleUrls()
 		log.Fatal(app.Run(viper.GetString("port")))
 	}()
 
