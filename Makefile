@@ -6,3 +6,7 @@ run: tidy build
 	@./bin/app
 test:
 	@go test -v ./...
+start:
+	@sudo docker-compose up --build
+clear:
+	@sudo docker-compose down
