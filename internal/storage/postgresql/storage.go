@@ -81,3 +81,35 @@ func (db *Storage) GetUserByGUID(guid string) (*models.User, error) {
 
 	return user, nil
 }
+
+func (db *Storage) GetRefreshToken(guid, tokenID string) (*models.RefreshToken, error) {
+	const (
+		op    = "storage.postgresql.GetRefreshToken"
+		query = "SELECT refresh_token_hash FROM refresh_tokens WHERE GUID=$1 AND token_id=$2"
+	)
+	var refreshToken models.RefreshToken
+
+	err := db.QueryRow(context.Background(), query, guid, tokenID).Scan(&refreshToken.RefreshTokenHash)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("%s : %s", op, "token not found")
+		}
+		return nil, fmt.Errorf("%s : %w", op, err)
+	}
+
+	return &refreshToken, nil
+}
+
+func (db *Storage) UpdateRefreshToken(guid, tokenID, newRefreshTokenHash string) error {
+	const (
+		op    = "storage.postgresql.UpdateRefreshToken"
+		query = "UPDATE refresh_tokens SET refresh_token_hash=$1 WHERE GUID=$2 AND token_id=$3"
+	)
+
+	_, err := db.Exec(context.Background(), query, newRefreshTokenHash, guid, tokenID)
+	if err != nil {
+		return fmt.Errorf("%s : %v", op, err)
+	}
+
+	return nil
+}
