@@ -1,19 +1,11 @@
-FROM golang:1.23 AS builder
+FROM golang:1.23
 
 WORKDIR /app
 
 COPY go.mod go.sum ./
 RUN go mod download
-
 COPY . .
 
-RUN make tidy
-RUN make build
+RUN go build -o app ./cmd/main.go
 
-FROM debian:bullseye-slim
-
-WORKDIR /app
-
-COPY --from=builder /app/bin/app /app/
-
-CMD ["/app/app"]
+CMD ["./app"]
