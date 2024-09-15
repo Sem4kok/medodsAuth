@@ -88,7 +88,7 @@ func generateAccessToken(guid, ipAddress, tokenID string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-	secretKey := "NoSecretForMedods"
+	secretKey := "NoSecretFromMedods"
 	return token.SignedString([]byte(secretKey))
 }
 
