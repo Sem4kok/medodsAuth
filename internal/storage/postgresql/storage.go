@@ -51,7 +51,7 @@ func (db *Storage) SaveUser(user *models.User) error {
 func (db *Storage) SaveToken(token *models.RefreshToken) error {
 	const (
 		op    = "storage.postgresql.SaveToken"
-		query = "INSERT INTO refresh_tokens (user_guid, ip_address, token_hash, token_id) VALUES ($1, $2, $3, $4));"
+		query = "INSERT INTO refresh_tokens (user_guid, ip_address, token_hash, token_id) VALUES ($1, $2, $3, $4);"
 	)
 
 	_, err := db.Exec(context.Background(), query, token.GUID, token.IP, token.RefreshTokenHash, token.ID)
