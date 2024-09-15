@@ -65,8 +65,6 @@ func RefreshTokens(c *gin.Context) {
 	guid := claims["Guid"].(string)
 	tokenID := claims["TokenID"].(string)
 	ip := claims["IPAddress"].(string)
-	// TODO DELETE LOG
-	log.Print(claims)
 
 	storedRefreshToken, err := storage.DB.GetRefreshToken(guid, tokenID)
 	if err != nil {
