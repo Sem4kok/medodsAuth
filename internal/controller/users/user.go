@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"medodsAuth/internal/models"
 	storage "medodsAuth/internal/storage/postgresql"
 	"net/http"
@@ -23,6 +24,7 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("user has created with guid: %s", user.GUID)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User created successfully",

@@ -36,7 +36,7 @@ func (db *Storage) Close() {
 func (db *Storage) SaveUser(user *models.User) error {
 	const (
 		op    = "storage.postgresql.SaveUser"
-		query = "INSERT INTO users (uuid ,first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5);"
+		query = "INSERT INTO users (guid ,first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5);"
 	)
 
 	_, err := db.Exec(context.Background(), query, user.GUID, user.FirstName, user.LastName, user.Email, user.Password)
