@@ -56,6 +56,7 @@ func RefreshTokens(c *gin.Context) {
 
 	claims, err := request.ParseAccessToken()
 	if err != nil {
+		log.Printf("%s : %s", op, err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid access token"})
 		return
 	}
@@ -66,17 +67,20 @@ func RefreshTokens(c *gin.Context) {
 
 	storedRefreshToken, err := storage.DB.GetRefreshToken(guid, tokenID)
 	if err != nil {
+		log.Printf("%s : %s", op, err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(storedRefreshToken.RefreshTokenHash), []byte(request.RefreshToken)); err != nil {
+		log.Printf("%s : %s", op, err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
 		return
 	}
 
 	user, err := storage.DB.GetUserByGUID(guid)
 	if err != nil {
+		log.Printf("%s : %s", op, err.Error())
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
