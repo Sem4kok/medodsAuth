@@ -85,7 +85,7 @@ func (db *Storage) GetUserByGUID(guid string) (*models.User, error) {
 func (db *Storage) GetRefreshToken(guid, tokenID string) (*models.RefreshToken, error) {
 	const (
 		op    = "storage.postgresql.GetRefreshToken"
-		query = "SELECT refresh_token_hash FROM refresh_tokens WHERE GUID=$1 AND token_id=$2"
+		query = "SELECT refresh_token_hash FROM refresh_tokens WHERE user_guid=$1 AND token_id=$2"
 	)
 	var refreshToken models.RefreshToken
 
@@ -103,7 +103,7 @@ func (db *Storage) GetRefreshToken(guid, tokenID string) (*models.RefreshToken, 
 func (db *Storage) UpdateRefreshToken(guid, tokenID, newRefreshTokenHash string) error {
 	const (
 		op    = "storage.postgresql.UpdateRefreshToken"
-		query = "UPDATE refresh_tokens SET refresh_token_hash=$1 WHERE GUID=$2 AND token_id=$3"
+		query = "UPDATE refresh_tokens SET refresh_token_hash=$1 WHERE user_guid=$2 AND token_id=$3"
 	)
 
 	_, err := db.Exec(context.Background(), query, newRefreshTokenHash, guid, tokenID)
