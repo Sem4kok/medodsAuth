@@ -85,6 +85,7 @@ func RefreshTokens(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
+	user.GUID = guid
 
 	currentIP := c.ClientIP()
 	if currentIP != ip {

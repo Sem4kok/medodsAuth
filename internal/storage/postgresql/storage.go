@@ -102,11 +102,17 @@ func (db *Storage) GetRefreshToken(guid, tokenID string) (*models.RefreshToken, 
 
 func (db *Storage) UpdateRefreshToken(guid, tokenID, newRefreshTokenHash string) error {
 	const (
-		op    = "storage.postgresql.UpdateRefreshToken"
-		query = "UPDATE refresh_tokens SET refresh_token_hash=$1 WHERE user_guid=$2 AND token_id=$3"
+		op          = "storage.postgresql.UpdateRefreshToken"
+		query       = "UPDATE refresh_tokens SET refresh_token_hash=$1 WHERE user_guid=$2 AND token_id=$3"
+		deleteQuery = "DELETE FROM refresh_tokens WHERE user_guid=$1 AND token_id!=$2"
 	)
 
 	_, err := db.Exec(context.Background(), query, newRefreshTokenHash, guid, tokenID)
+	if err != nil {
+		return fmt.Errorf("%s : %v", op, err)
+	}
+
+	_, err = db.Exec(context.Background(), deleteQuery, guid, tokenID)
 	if err != nil {
 		return fmt.Errorf("%s : %v", op, err)
 	}
