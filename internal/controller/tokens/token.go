@@ -18,6 +18,7 @@ func GetTokens(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	user.GUID = guid
 	ip := c.ClientIP()
 
 	tokens, err := user.GenerateTokens(ip)
@@ -61,9 +62,11 @@ func RefreshTokens(c *gin.Context) {
 		return
 	}
 
-	guid := claims["GUID"].(string)
+	guid := claims["Guid"].(string)
 	tokenID := claims["TokenID"].(string)
 	ip := claims["IPAddress"].(string)
+	// TODO DELETE LOG
+	log.Print(claims)
 
 	storedRefreshToken, err := storage.DB.GetRefreshToken(guid, tokenID)
 	if err != nil {

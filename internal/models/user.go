@@ -80,12 +80,16 @@ func (user *User) GenerateTokens(ipAddress string) (*Tokens, error) {
 }
 
 func generateAccessToken(guid, ipAddress, tokenID string) (string, error) {
+	// TODO DELETE LOG
+	log.Print("BRRRRRRRRRRRRRRRRRRRRRRRRRR" + "GUID:" + guid)
 	claims := jwt.MapClaims{
-		"GUID":      guid,
+		"Guid":      guid,
 		"IPAddress": ipAddress,
 		"TokenID":   tokenID,
 		"exp":       time.Now().Add(15 * time.Minute).Unix(),
 	}
+	// TODO DELETE LOG
+	log.Print(claims)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 	secretKey := "NoSecretFromMedods"
